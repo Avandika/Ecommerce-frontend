@@ -1,53 +1,24 @@
-import { useState } from 'react'
-import Smartwatch from '../assets/Smartwatch.jpg'
-import Earbuds from '../assets/Earbuds.jpg'
+import products from '../data/Products';
 
-
-function Product(){
-  const [count, setCount] = useState(0)
-
+function Product() {
   return (
-    <>
-    <div class="table-auto">
-      <table>
-        <thead class="bg-gray-200">
-          <tr>
-            <th class="border border-gray-400 px-4 py-2">Product</th>
-            <th class="border border-gray-400 px-4 py-2">Price</th>
-            <th class="border border-gray-400 px-4 py-2">Description</th>
-            <th class="border border-gray-400 px-4 py-2">Image</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td class="border border-gray-400 px-4 py-2">Smartwatch Z10</td>
-            <td class="border border-gray-400 px-4 py-2">₹3,499</td>
-            <td class="border border-gray-400 px-4 py-2">7-day battery life.</td>
-            <td class="border border-gray-400 px-4 py-2">
-                <img src={Smartwatch} alt="Smartwatch Z10" className="w-20 h-auto"/>
-            </td>
-          </tr>
-          <tr>
-            <td class="border border-gray-400 px-4 py-2">Wireless Earbuds X1</td>
-            <td class="border border-gray-400 px-4 py-2">₹2,199</td>
-            <td class="border border-gray-400 px-4 py-2">20-hour battery.</td>
-            <td class="border border-gray-400 px-4 py-2">
-                <img src={Earbuds} alt="Wireless Earbuds X1" className="w-20 h-auto"/>
-            </td>
-          </tr>
-          <tr>
-            <td class="border border-gray-400 px-4 py-2">Laptop Stand Pro</td>
-            <td class="border border-gray-400 px-4 py-2">₹1,099</td>
-            <td class="border border-gray-400 px-4 py-2">foldable</td>
-            <td class="border border-gray-400 px-4 py-2">
-                <img src={Smartwatch} alt="Smartwatch Z10" className="w-20 h-auto"/>
-            </td>
-          </tr>
-        </tbody>
-    </table>
-  </div>   
-    </>
-  )
+    <div className="p-6 bg-[#f9f6f1] min-h-screen font-serif">
+      <h1 className="text-3xl font-bold mb-6 text-center text-[#1f160d]">Our Products</h1>
+
+      <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+        {products.map((product) => (
+          <div key={product.id} className="bg-white p-4 rounded-xl shadow hover:shadow-lg transition">
+            <img src={product.image} alt={product.name} className="w-full h-auto object-cover rounded" />
+            <h2 className="text-xl font-semibold mt-4">{product.name}</h2>
+            <p className="text-lg text-green-700 font-bold">{product.price}</p>
+            <button className="mt-3 w-full bg-stone-700 text-white py-2 rounded-full hover:bg-green-800 transition">
+              Add to Cart
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 }
 
-export default Product
+export default Product;
