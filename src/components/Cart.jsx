@@ -10,7 +10,11 @@ function Cart({ cartItems, removeFromCart }) {
   }, 0);
 
   const handleBuyAll = () => {
-    localStorage.setItem('buyNowAll', JSON.stringify(cartItems));
+    // Append all cart items to existing orders
+    const existingOrders = JSON.parse(localStorage.getItem('orders')) || [];
+    const newOrders = [...existingOrders, ...cartItems];
+    localStorage.setItem('orders', JSON.stringify(newOrders));
+
     navigate('/Order');
   };
 
@@ -52,23 +56,25 @@ function Cart({ cartItems, removeFromCart }) {
                     <p className="text-gray-800 font-semibold mb-1">
                       Subtotal: ₹{itemTotal.toLocaleString('en-IN')}
                     </p>
-                    <div className='flex gap-2'>
-                    <button
-                      onClick={() => removeFromCart(item.id)}
-                      className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700 mb-2"
-                    >
-                      Remove
-                    </button>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => removeFromCart(item.id)}
+                        className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700 mb-2"
+                      >
+                        Remove
+                      </button>
 
-                    <button
-                      onClick={() => {
-                        localStorage.setItem('buyNowItem', JSON.stringify(item));
-                        navigate('/Order');
-                      }}
-                      className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-700 mb-2"
-                    >
-                      Buy Now
-                    </button>
+                      <button
+                        onClick={() => {
+                          const existingOrders = JSON.parse(localStorage.getItem('orders')) || [];
+                          const newOrders = [...existingOrders, item];
+                          localStorage.setItem('orders', JSON.stringify(newOrders));
+                          navigate('/Order');
+                        }}
+                        className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-700 mb-2"
+                      >
+                        Buy Now
+                      </button>
                     </div>
                   </div>
                 );

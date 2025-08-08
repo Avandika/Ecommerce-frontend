@@ -7,6 +7,8 @@ import Home from './components/Home';
 import Cart from './components/Cart';
 import About from './components/About';
 import Order from './components/Order';
+import Login from './components/Login';
+import PrivateRoute from './components/PrivateRoute';
 
 function App() {
   const [cartItems, setCartItems] = useState([]);
@@ -25,19 +27,51 @@ function App() {
     <Router>
       <Navbar cartCount={cartItems.length} />
       <Routes>
-        <Route path="/Home" element={<Home />} />
-        <Route path="/Product" element={<Product addToCart={addToCart} />} />
+        {/* Public routes */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/about" element={<About />} />
+
+        {/* Protected routes */}
         <Route
-          path="/Cart"
+          path="/"
           element={
-            <Cart
-              cartItems={cartItems}
-              removeFromCart={removeFromCart}
-            />
+            <PrivateRoute>
+              <Home />
+            </PrivateRoute>
           }
         />
-        <Route path="/About" element={<About />} />
-        <Route path="/Order" element={<Order />} />
+        <Route
+          path="/home"
+          element={
+            <PrivateRoute>
+              <Home />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/product"
+          element={
+            <PrivateRoute>
+              <Product addToCart={addToCart} />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/cart"
+          element={
+            <PrivateRoute>
+              <Cart cartItems={cartItems} removeFromCart={removeFromCart} />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/order"
+          element={
+            <PrivateRoute>
+              <Order />
+            </PrivateRoute>
+          }
+        />
       </Routes>
     </Router>
   );

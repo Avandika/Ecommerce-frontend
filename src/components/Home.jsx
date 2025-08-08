@@ -1,6 +1,7 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom';
 import Bgh from '../assets/bgh.jpg';
+import About from './About'
 
 function Home() {
   const navigate = useNavigate();
@@ -23,6 +24,8 @@ function Home() {
         >
           Start Shopping
         </button>
+
+        <About/>
       </div>
     </>
   );
