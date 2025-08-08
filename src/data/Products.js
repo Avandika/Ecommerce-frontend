@@ -32,3 +32,4 @@ const products = [
     category: "Accessories",
   },
 ];
+export default products;

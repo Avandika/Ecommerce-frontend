@@ -7,7 +7,7 @@ function Product({ addToCart }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [activeFilter, setActiveFilter] = useState('All');
   const navigate = useNavigate();
-  const categories = ['All', ...new Set(products.map((p) => p.category || 'Other'))];
+  const categories = ['All', ...new Set(products.map((p) => p.category || 'Misc'))];
   const handleQuantityChange = (id, delta) => {
     setQuantities((prev) => ({
       ...prev,
@@ -32,7 +32,7 @@ function Product({ addToCart }) {
     setActiveFilter(category);
   };
   const filteredProducts = products.filter((product) => {
-    const matchesCategory = activeFilter === 'All' || (product.category || 'Other') === activeFilter;
+    const matchesCategory = activeFilter === 'All' || (product.category || 'Misc') === activeFilter;
     const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase());
     return matchesCategory && matchesSearch;
   });
