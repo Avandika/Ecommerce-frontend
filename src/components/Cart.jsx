@@ -3,20 +3,25 @@ import { useNavigate } from 'react-router-dom';
 
 function Cart({ cartItems, removeFromCart }) {
   const navigate = useNavigate();
-
-  const totalPrice = cartItems.reduce((acc, item) => {
-    const numericPrice = parseInt(item.price.replace(/[^0-9]/g, ''), 10);
-    return acc + numericPrice * item.quantity;
-  }, 0);
+  const totalPrice = cartItems.reduce(
+    (acc, item) => acc + item.price * item.quantity,
+    0
+  );
 
   const handleBuyAll = () => {
-    // Append all cart items to existing orders
     const existingOrders = JSON.parse(localStorage.getItem('orders')) || [];
     const newOrders = [...existingOrders, ...cartItems];
     localStorage.setItem('orders', JSON.stringify(newOrders));
-
     navigate('/Order');
   };
+
+  // Helper to format price in INR with commas
+  const formatPrice = (price) =>
+    price.toLocaleString('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+      maximumFractionDigits: 0,
+    });
 
   return (
     <div className="bg-[#bebebe] min-h-screen py-2 font-serif">
@@ -28,7 +33,7 @@ function Cart({ cartItems, removeFromCart }) {
         ) : (
           <>
             <div className="mb-4 p-4 bg-white rounded-lg shadow text-xl font-semibold text-[#1f160d] text-center flex justify-between items-center">
-              Total Price: ₹{totalPrice.toLocaleString('en-IN')}
+              Total Price: {formatPrice(totalPrice)}
               <div>
                 <button
                   onClick={handleBuyAll}
@@ -41,20 +46,23 @@ function Cart({ cartItems, removeFromCart }) {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
               {cartItems.map((item) => {
-                const numericPrice = parseInt(item.price.replace(/[^0-9]/g, ''), 10);
-                const itemTotal = numericPrice * item.quantity;
+                const itemTotal = item.price * item.quantity;
 
                 return (
                   <div
                     key={item.id}
                     className="bg-white shadow-md rounded-lg p-4 flex flex-col items-center text-center h-100"
                   >
-                    <img src={item.image} alt={item.name} className="h-50 w-60 object-contain mb-1" />
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      className="h-50 w-60 object-contain mb-1"
+                    />
                     <h3 className="font-semibold text-lg">{item.name}</h3>
-                    <p className="text-gray-700 mb-1">Price: {item.price}</p>
+                    <p className="text-gray-700 mb-1">Price: {formatPrice(item.price)}</p>
                     <p className="text-gray-700 mb-1">Quantity: {item.quantity}</p>
                     <p className="text-gray-800 font-semibold mb-1">
-                      Subtotal: ₹{itemTotal.toLocaleString('en-IN')}
+                      Subtotal: {formatPrice(itemTotal)}
                     </p>
                     <div className="flex gap-2">
                       <button

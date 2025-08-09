@@ -6,7 +6,6 @@ function Login() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Clear previous login on visit
     sessionStorage.removeItem('username');
   }, []);
 

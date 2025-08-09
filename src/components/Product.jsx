@@ -40,10 +40,7 @@ function Product({ addToCart }) {
   return (
     <div className="p-6 bg-[#bebebe] min-h-screen font-serif">
       <h1 className="text-3xl font-bold mb-6 text-center text-[#1f160d]">Our Products</h1>
-
-      {/* Search + Filters */}
       <div className="flex flex-col md:flex-row items-center justify-center gap-4 mb-6">
-        {/* Search input */}
         <input
           type="text"
           placeholder="Search products..."
@@ -51,8 +48,6 @@ function Product({ addToCart }) {
           onChange={handleSearchChange}
           className="w-full max-w-md px-4 py-2 rounded-md border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-stone-700"
         />
-
-        {/* Filter buttons */}
         <div className="flex flex-wrap gap-2 justify-center">
           {categories.map((category) => (
             <button
@@ -69,8 +64,6 @@ function Product({ addToCart }) {
           ))}
         </div>
       </div>
-
-      {/* Products grid */}
       <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         {filteredProducts.length === 0 ? (
           <p className="text-center col-span-full">No products found.</p>
