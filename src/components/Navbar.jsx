@@ -38,17 +38,16 @@ function Navbar({ cartCount, cartItems, addToCart, removeFromCart }) {
   };
 
   const increaseQty = (id) => {
-    const item = cartItems.find((i) => i.id === id);
-    addToCart({ ...item, quantity: 1 });
-  };
+  const item = cartItems.find((i) => i.id === id);
+  addToCart({ ...item, quantity: item.quantity + 1 });
+};
 
-  const decreaseQty = (id) => {
-    const item = cartItems.find((i) => i.id === id);
-    if (item.quantity > 1) {
-      const updatedItem = { ...item, quantity: -1 };
-      addToCart(updatedItem);
-    }
-  };
+const decreaseQty = (id) => {
+  const item = cartItems.find((i) => i.id === id);
+  if (item.quantity > 1) {
+    addToCart({ ...item, quantity: item.quantity - 1 }); 
+  } 
+};
 
   const formatPrice = (price) => {
     let num = typeof price === 'string' ? parseInt(price.replace(/[^0-9]/g, ''), 10) : price;
@@ -125,7 +124,8 @@ function Navbar({ cartCount, cartItems, addToCart, removeFromCart }) {
           zIndex: 9999,
           transform: isCartOpen ? 'translateX(0)' : 'translateX(100%)',
           transition: 'transform 0.3s ease',
-          overflowY: 'auto',
+          display: 'flex',
+          flexDirection: 'column',
         }}
         role="dialog"
         aria-modal="true"
@@ -135,42 +135,42 @@ function Navbar({ cartCount, cartItems, addToCart, removeFromCart }) {
           <h2 id="cart-title" className="text-lg font-bold">Your Cart</h2>
           <button onClick={() => setIsCartOpen(false)} aria-label="Close Cart" className="text-xl font-bold focus:outline-none">✕</button>
         </div>
-        
-        <div className="p-4">
+
+        {/* Scrollable Items */}
+        <div className="p-4 flex-1 overflow-y-auto">
           {cartItems.length === 0 ? (
             <p>Your cart is empty.</p>
           ) : (
-            <>
-              <ul className="space-y-4 max-h-[80vh] overflow-auto">
-                {cartItems.map((item) => (
-                  <li key={item.id} className="flex justify-between items-center border-b pb-2">
-                    <div className="flex items-center space-x-3">
-                      <img src={item.image} alt={item.name} className="w-20 h-20 object-cover rounded" />
-                      <div>
-                        <p className="font-semibold">{item.name}</p>
-                        <div className="flex items-center rounded-full w-24 border overflow-hidden h-9 justify-between font-bold">
-                          <button onClick={() => decreaseQty(item.id)} className="px-3 py-1 hover:bg-gray-300">-</button>
-                          <span className="mx-2">{item.quantity}</span>
-                          <button onClick={() => increaseQty(item.id)} className="px-3 py-1 hover:bg-gray-300">+</button>
-                        </div>
+            <ul className="space-y-4">
+              {cartItems.map((item) => (
+                <li key={item.id} className="flex justify-between items-center border-b pb-2">
+                  <div className="flex items-center space-x-3">
+                    <img src={item.image} alt={item.name} className="w-20 h-20 object-cover rounded" />
+                    <div>
+                      <p className="font-semibold">{item.name}</p>
+                      <div className="flex items-center rounded-full w-24 border overflow-hidden h-9 justify-between font-bold">
+                        <button onClick={() => decreaseQty(item.id)} className="px-3 py-1 hover:bg-gray-300">-</button>
+                        <span className="mx-2">{item.quantity}</span>
+                        <button onClick={() => increaseQty(item.id)} className="px-3 py-1 hover:bg-gray-300">+</button>
                       </div>
                     </div>
-                    <p className="font-semibold">{formatPrice(item.price * item.quantity)}</p>
-                    <button onClick={() => removeFromCart(item.id)} className="text-white px-1 py-1 rounded hover:bg-red-100">❌</button>
-                  </li>
-                ))}
-              </ul>
-
-              <div className="mt-4 border-t pt-4 flex flex-col gap-2">
-                <div className="flex justify-between font-bold text-lg">
-                  <span>Total</span>
-                  <span>{formatPrice(cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0))}</span>
-                </div>
-                <button onClick={handleCheckout} className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">Checkout</button>
-                <button onClick={handleGoToCart} className="w-full bg-gray-500 text-white py-2 rounded mb-2">Go to Cart</button>
-              </div>
-            </>
+                  </div>
+                  <p className="font-semibold">{formatPrice(item.price * item.quantity)}</p>
+                  <button onClick={() => removeFromCart(item.id)} className="text-white px-1 py-1 rounded hover:bg-red-100">❌</button>
+                </li>
+              ))}
+            </ul>
           )}
+        </div>
+
+        {/* Fixed Footer Buttons */}
+        <div className="p-4 border-t flex flex-col gap-2 bg-white">
+          <div className="flex justify-between font-bold text-lg mb-2">
+            <span>Total</span>
+            <span>{formatPrice(cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0))}</span>
+          </div>
+          <button onClick={handleCheckout} className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">Checkout</button>
+          <button onClick={handleGoToCart} className="w-full bg-gray-500 text-white py-2 rounded">Go to Cart</button>
         </div>
       </div>
 
