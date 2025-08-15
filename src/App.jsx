@@ -7,9 +7,11 @@ import Home from './components/Home';
 import Order from './components/Order';
 import Login from './components/Login';
 import PrivateRoute from './components/PrivateRoute';
+import Cart from './components/Cart';
 
 function App() {
   const [cartItems, setCartItems] = useState([]);
+
   const addToCart = (product) => {
     setCartItems((prevItems) => {
       const exist = prevItems.find(item => item.id === product.id);
@@ -24,19 +26,26 @@ function App() {
   };
 
   const removeFromCart = (id) => {
-    setCartItems(cartItems.filter(item => item.id !== id));
+    setCartItems(prevItems => prevItems.filter(item => item.id !== id));
   };
 
   return (
     <Router>
-      <Navbar cartCount={cartItems.length} cartItems={cartItems} />
+      {/* Pass both cartItems and add/remove functions to Navbar so drawer uses the same state */}
+      <Navbar
+        cartCount={cartItems.length}
+        cartItems={cartItems}
+        addToCart={addToCart}
+        removeFromCart={removeFromCart}
+      />
+
       <Routes>
         <Route path="/login" element={<Login />} />
-
         <Route path="/" element={<PrivateRoute><Home /></PrivateRoute>} />
         <Route path="/home" element={<PrivateRoute><Home /></PrivateRoute>} />
         <Route path="/product" element={<PrivateRoute><Product addToCart={addToCart} /></PrivateRoute>} />
         <Route path="/order" element={<PrivateRoute><Order /></PrivateRoute>} />
+        <Route path="/cart" element={<PrivateRoute><Cart cartItems={cartItems} removeFromCart={removeFromCart} /></PrivateRoute>} />
       </Routes>
     </Router>
   );
