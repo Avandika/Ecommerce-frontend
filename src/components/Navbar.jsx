@@ -183,3 +183,4 @@ const decreaseQty = (id) => {
 }
 
 export default Navbar;
+
