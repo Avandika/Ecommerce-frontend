@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import Logo from '../assets/logo.png'
@@ -5,17 +6,29 @@ import Cartimg from '../assets/cart.png'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faInstagram, faFacebookF } from '@fortawesome/free-brands-svg-icons'
 
-function Navbar({ cartCount, cartItems, addToCart, removeFromCart }) {
+function Navbar({ cartCount, cartItems, addToCart, removeFromCart, updateQty }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [username, setUsername] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [products, setProducts] = useState([]);
   const navigate = useNavigate();
   const location = useLocation();
+
+  // helper: always use _id when present, otherwise id
+  const idOf = (item) => item?._id ?? item?.id;
 
   useEffect(() => {
     const user = sessionStorage.getItem('username');
     setUsername(user && user.trim() !== '' ? user : null);
   }, [location]);
+
+  useEffect(() => {
+    fetch('http://localhost:5000/api/products')
+      .then(res => res.json())
+      .then(data => setProducts(data))
+      .catch(err => console.error('Error fetching products:', err));
+  }, []);
 
   const handleLogout = () => {
     sessionStorage.removeItem('username');
@@ -24,6 +37,17 @@ function Navbar({ cartCount, cartItems, addToCart, removeFromCart }) {
     navigate('/login');
   };
 
+   const handleSearchChange = (e) => setSearchTerm(e.target.value);
+  // inside Navbar.jsx
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    if (searchTerm.trim()) {
+      navigate(`/product?search=${encodeURIComponent(searchTerm)}`);
+    } else {
+      navigate('/product');
+    }
+  };
+  
   const handleGoToCart = () => {
     setIsCartOpen(false);
     navigate('/cart');
@@ -37,18 +61,7 @@ function Navbar({ cartCount, cartItems, addToCart, removeFromCart }) {
     navigate('/order');
   };
 
-  const increaseQty = (id) => {
-  const item = cartItems.find((i) => i.id === id);
-  addToCart({ ...item, quantity: item.quantity + 1 });
-};
-
-const decreaseQty = (id) => {
-  const item = cartItems.find((i) => i.id === id);
-  if (item.quantity > 1) {
-    addToCart({ ...item, quantity: item.quantity - 1 }); 
-  } 
-};
-
+  // format INR nicely
   const formatPrice = (price) => {
     let num = typeof price === 'string' ? parseInt(price.replace(/[^0-9]/g, ''), 10) : price;
     if (isNaN(num)) num = 0;
@@ -58,15 +71,17 @@ const decreaseQty = (id) => {
   return (
     <>
       <nav className="text-[#1f160d] px-5 py-2 bg-[#f2f2f2] shadow-md flex items-center relative z-10">
-        <div className="flex space-x-3 w-[10%] items-center">
-          <a href="https://instagram.com/rd_bouti_que" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="text-[#1f160d] hover:text-[#C13584] text-l" > <FontAwesomeIcon icon={faInstagram} /> </a>
-          <a href="https://www.facebook.com/profile.php?id=61578882002576" target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="text-[#1f160d] hover:text-[#3b5998] text-l" > <FontAwesomeIcon icon={faFacebookF} /> </a>
+        <div className="flex space-x-3 w-[5%] items-center">
+          <a href="https://instagram.com/rd_bouti_que" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="text-[#1f160d] hover:text-[#C13584] text-l"><FontAwesomeIcon icon={faInstagram} /></a>
+          <a href="https://www.facebook.com/profile.php?id=61578882002576" target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="text-[#1f160d] hover:text-[#3b5998] text-l"><FontAwesomeIcon icon={faFacebookF} /></a>
         </div>
-        <div className="items-center w-[75%] ml-[30%]">
-          <div className="flex items-center space-x-4">
+
+        <div className="items-center w-[60%] ml-[20%]">
+          <div className="flex items-center space-x-2">
             <img src={Logo} alt="Logo" className="w-16 h-12" />
-            <span className="text-3xl font-bold font-serif items-center">E-Commerce</span>
+            <span className="text-3xl font-bold font-serif -center">Gadgetrix</span>
           </div>
+
           <div className="md:hidden text-center flex-1">
             <button onClick={() => setIsOpen(!isOpen)} className="focus:outline-none">
               <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -74,13 +89,26 @@ const decreaseQty = (id) => {
               </svg>
             </button>
           </div>
-          <div className="hidden md:flex space-x-6 text-xl items-center text-center flex-1">
-            <Link to="/home" className="hover:underline font-bold font-serif">Home</Link>
+
+          <div className="hidden md:flex space-x-6 text-l items-center text-center flex-1">
+            <Link to="/home" className="hover:underline font-bold font-serif ml-10">Home</Link>
             <Link to="/product" className="hover:underline font-bold font-serif">Products</Link>
             <Link to="/order" className="hover:underline font-bold font-serif">Orders</Link>
           </div>
         </div>
-        <div className="hidden md:flex flex-col items-center md:flex-row md:space-x-4 space-y-2 md:space-y-0 font-bold font-serif w-auto md:w-[15%] text-center">
+
+        <div className="hidden md:flex flex-col items-center md:flex-row md:space-x-4 space-y-2 md:space-y-0 font-bold font-serif w-auto md:w-[35%] text-center">
+        <form onSubmit={handleSearchSubmit}>
+          <input
+            type="text"
+            placeholder="🔍 Search products..."
+            value={searchTerm}
+            onChange={handleSearchChange}
+            className="w-50 max-w-md px-4 py-2 rounded-md border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-stone-700"
+          />
+        </form>
+
+
           <button onClick={() => setIsCartOpen(true)} className="relative focus:outline-none" aria-label="Open Cart">
             <img src={Cartimg} alt="cart" className="h-6 w-6 mx-auto" />
             {cartCount > 0 && <span className="absolute -top-2 -right-4 bg-red-600 text-white text-xs px-2 py-0.5 rounded-full">{cartCount}</span>}
@@ -142,23 +170,26 @@ const decreaseQty = (id) => {
             <p>Your cart is empty.</p>
           ) : (
             <ul className="space-y-4">
-              {cartItems.map((item) => (
-                <li key={item.id} className="flex justify-between items-center border-b pb-2">
-                  <div className="flex items-center space-x-3">
-                    <img src={item.image} alt={item.name} className="w-20 h-20 object-cover rounded" />
-                    <div>
-                      <p className="font-semibold">{item.name}</p>
-                      <div className="flex items-center rounded-full w-24 border overflow-hidden h-9 justify-between font-bold">
-                        <button onClick={() => decreaseQty(item.id)} className="px-3 py-1 hover:bg-gray-300">-</button>
-                        <span className="mx-2">{item.quantity}</span>
-                        <button onClick={() => increaseQty(item.id)} className="px-3 py-1 hover:bg-gray-300">+</button>
+              {cartItems.map((item) => {
+                const uid = idOf(item);
+                return (
+                  <li key={uid} className="flex justify-between items-center border-b pb-2">
+                    <div className="flex items-center space-x-3">
+                      <img src={item.image} alt={item.name} className="w-20 h-20 object-cover rounded" />
+                      <div>
+                        <p className="font-semibold">{item.name}</p>
+                        <div className="flex items-center rounded-full w-24 border overflow-hidden h-9 justify-between font-bold">
+                          <button onClick={() => updateQty(uid, -1)} className="px-3 py-1 hover:bg-gray-300">-</button>
+                          <span className="mx-2">{item.quantity}</span>
+                          <button onClick={() => updateQty(uid, +1)} className="px-3 py-1 hover:bg-gray-300">+</button>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <p className="font-semibold">{formatPrice(item.price * item.quantity)}</p>
-                  <button onClick={() => removeFromCart(item.id)} className="text-white px-1 py-1 rounded hover:bg-red-100">❌</button>
-                </li>
-              ))}
+                    <p className="font-semibold">{formatPrice((item.price ?? 0) * (item.quantity ?? 1))}</p>
+                    <button onClick={() => removeFromCart(uid)} className="text-white px-1 py-1 rounded hover:bg-red-100">X</button>
+                  </li>
+                )
+              })}
             </ul>
           )}
         </div>
@@ -167,7 +198,7 @@ const decreaseQty = (id) => {
         <div className="p-4 border-t flex flex-col gap-2 bg-white">
           <div className="flex justify-between font-bold text-lg mb-2">
             <span>Total</span>
-            <span>{formatPrice(cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0))}</span>
+            <span>{formatPrice(cartItems.reduce((acc, item) => acc + (item.price ?? 0) * (item.quantity ?? 1), 0))}</span>
           </div>
           <button onClick={handleCheckout} className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">Checkout</button>
           <button onClick={handleGoToCart} className="w-full bg-gray-500 text-white py-2 rounded">Go to Cart</button>

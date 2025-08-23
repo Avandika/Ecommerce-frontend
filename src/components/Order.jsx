@@ -25,7 +25,7 @@ function Order() {
 
   return (
     <div className="bg-[#bebebe] min-h-screen p-6 font-serif">
-      <h1 className="text-3xl font-bold mb-6 text-center text-[#1f160d]">Order Summary</h1>
+      <h1 className="text-3xl font-bold mb-6 text-center text-[#1f160d]">Orders</h1>
 
       <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {orderItems.map((item, index) => (
