@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 function Cart({ cartItems, setCartItems }) {
   const navigate = useNavigate();
 
-  // Update quantity of an item
   const updateQuantity = (id, amount) => {
     const updatedCart = cartItems
       .map(item =>
@@ -13,23 +12,20 @@ function Cart({ cartItems, setCartItems }) {
     setCartItems(updatedCart);
   };
 
-  // Remove item from cart
   const removeItem = (id) => {
     const updatedCart = cartItems.filter(item => item._id !== id);
     setCartItems(updatedCart);
   };
 
-  // Total price
   const getTotalPrice = () =>
     cartItems.reduce((total, item) => total + item.price * item.quantity, 0).toFixed(2);
 
-  // Checkout function
   const handleCheckout = () => {
     const existingOrders = JSON.parse(localStorage.getItem('orders')) || [];
     const newOrders = [...existingOrders, ...cartItems];
     localStorage.setItem('orders', JSON.stringify(newOrders));
-    setCartItems([]); // Clear cart after checkout
-    navigate('/order'); // Navigate to order page
+    setCartItems([]); 
+    navigate('/order'); 
   };
 
   const goToProducts = () => {

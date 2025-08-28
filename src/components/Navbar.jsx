@@ -1,7 +1,6 @@
-
 import { useState, useEffect } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
-import Logo from '../assets/logo.png'
+import Logo from '../assets/Luxora.png'
 import Cartimg from '../assets/cart.png'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faInstagram, faFacebookF } from '@fortawesome/free-brands-svg-icons'
@@ -15,7 +14,6 @@ function Navbar({ cartCount, cartItems, addToCart, removeFromCart, updateQty }) 
   const navigate = useNavigate();
   const location = useLocation();
 
-  // helper: always use _id when present, otherwise id
   const idOf = (item) => item?._id ?? item?.id;
 
   useEffect(() => {
@@ -37,8 +35,8 @@ function Navbar({ cartCount, cartItems, addToCart, removeFromCart, updateQty }) 
     navigate('/login');
   };
 
-   const handleSearchChange = (e) => setSearchTerm(e.target.value);
-  // inside Navbar.jsx
+  const handleSearchChange = (e) => setSearchTerm(e.target.value);
+
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     if (searchTerm.trim()) {
@@ -61,7 +59,6 @@ function Navbar({ cartCount, cartItems, addToCart, removeFromCart, updateQty }) 
     navigate('/order');
   };
 
-  // format INR nicely
   const formatPrice = (price) => {
     let num = typeof price === 'string' ? parseInt(price.replace(/[^0-9]/g, ''), 10) : price;
     if (isNaN(num)) num = 0;
@@ -77,9 +74,8 @@ function Navbar({ cartCount, cartItems, addToCart, removeFromCart, updateQty }) 
         </div>
 
         <div className="items-center w-[60%] ml-[20%]">
-          <div className="flex items-center space-x-2">
-            <img src={Logo} alt="Logo" className="w-16 h-12" />
-            <span className="text-3xl font-bold font-serif -center">Gadgetrix</span>
+          <div className="flex items-center ">
+            <img src={Logo} alt="Logo" className="w-90 h-15" />
           </div>
 
           <div className="md:hidden text-center flex-1">
@@ -121,7 +117,7 @@ function Navbar({ cartCount, cartItems, addToCart, removeFromCart, updateQty }) 
         </div>
 
         {isOpen && (
-          <div className="md:hidden mt-4 flex flex-col space-y-4 text-xl font-serif font-bold">
+          <div className="md:hidden mt-4 flex flex-col space-y-3 text-xl font-serif font-bold">
             <Link to="/home" onClick={() => setIsOpen(false)}>Home</Link>
             <Link to="/product" onClick={() => setIsOpen(false)}>Products</Link>
             <Link to="/order" onClick={() => setIsOpen(false)}>Orders</Link>
